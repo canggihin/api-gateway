@@ -35,6 +35,7 @@ func main() {
 	app.Use(configCors)
 
 	routes.ServiceRoutes(app, db)
+	routes.UserRoutes(app, db)
 	routes.Gateway(app, db)
 	log.Fatal(app.Listen(":4000"))
 }
