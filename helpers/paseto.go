@@ -2,30 +2,27 @@ package helpers
 
 import (
 	"api-gateway/models"
-	"crypto/ed25519"
-	"encoding/base64"
 	"os"
 	"time"
 
 	"github.com/o1egl/paseto"
 )
 
-func LoadPrivateKey() (ed25519.PrivateKey, error) {
-	privateKeyData, err := base64.StdEncoding.DecodeString(os.Getenv("PASETO_PRIVATE_KEY"))
+func loadPrivateKey(privKeyFile string) ([]byte, error) {
+	privateKeyBytes, err := os.ReadFile(privKeyFile)
 	if err != nil {
 		return nil, err
 	}
-	return ed25519.PrivateKey(privateKeyData), nil
+	return privateKeyBytes, nil
 }
 
 func CreateToken(data models.UserRegister) (string, string, error) {
 
 	// publicKey := os.Getenv("PASETO_PUBLIC_KEY")
-	privateKey, err := LoadPrivateKey()
+	privateKey, err := loadPrivateKey("private_key.pem")
 	if err != nil {
 		return "", "", err
 	}
-
 	v2 := paseto.NewV2()
 
 	jsonData := map[string]interface{}{
@@ -48,7 +45,7 @@ func CreateToken(data models.UserRegister) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-	refreshToken, err := v2.Sign([]byte(privateKey), jsonData, &paseto.JSONToken{
+	refreshToken, err := v2.Sign(privateKey, jsonData, &paseto.JSONToken{
 		Audience:   "service",
 		Issuer:     "api-gateway",
 		Subject:    "refresh",
