@@ -5,13 +5,18 @@ import (
 	"api-gateway/models"
 	"api-gateway/repository"
 	"context"
+	"errors"
+	"fmt"
 	"strings"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type UserService interface {
 	RegisterUser(ctx context.Context, data models.UserRegister) error
 	UpdateActivate(ctx context.Context, status string, email string) error
+	LoginClassic(ctx context.Context, data models.Login) (models.LoginResponse, error)
 }
 
 type userRepo struct {
@@ -22,6 +27,38 @@ func NewUserService(r repository.UserService) *userRepo {
 	return &userRepo{user: r}
 }
 
+func (s *userRepo) LoginClassic(ctx context.Context, data models.Login) (models.LoginResponse, error) {
+	user, err := s.user.LoginClassic(ctx, data)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return models.LoginResponse{}, &helpers.NotFoundError{Message: fmt.Sprintf("Unable to Find Username with %s", data.Username), MessageDev: err.Error()}
+		}
+	}
+
+	if err := helpers.ComparePassword(user.Password, data.Password); err != nil {
+		return models.LoginResponse{}, &helpers.UnauthorizedError{Message: "Invalid Password", MessageDev: err.Error()}
+	}
+
+	accessToken, refreshToken, err := helpers.CreateToken(user)
+	if err != nil {
+		return models.LoginResponse{}, &helpers.InternalServerError{Message: "Failed to Create Token", MessageDev: err.Error()}
+	}
+
+	if err := s.user.UpdateRefreshToken(ctx, user.Username, refreshToken); err != nil {
+		return models.LoginResponse{}, &helpers.InternalServerError{Message: "Failed to Update Refresh Token", MessageDev: err.Error()}
+	}
+
+	result := models.LoginResponse{
+		Username:     user.Username,
+		Status:       user.Status,
+		Subscription: user.Subscription,
+		ExpSubs:      user.ExpSubs,
+		RefreshToken: refreshToken,
+		AccessToken:  accessToken,
+	}
+
+	return result, nil
+}
 func (s *userRepo) RegisterUser(ctx context.Context, data models.UserRegister) error {
 
 	if !strings.Contains(data.Email, "@") || (!strings.HasSuffix(data.Email, "@gmail.com") && !strings.HasSuffix(data.Email, "@yahoo.com")) {

@@ -18,6 +18,25 @@ func NewUserHandler(user service.UserService) *userHandler {
 	return &userHandler{user: user}
 }
 
+func (h *userHandler) LoginClassic(ctx *fiber.Ctx) error {
+	var request models.Login
+
+	if err := ctx.BodyParser(&request); err != nil {
+		return &helpers.BadRequestError{Message: "Invalid Username or Password", MessageDev: err.Error()}
+	}
+
+	user, err := h.user.LoginClassic(context.Background(), request)
+	if err != nil {
+		return helpers.ErrorHandler(ctx, err)
+	}
+	result := helpers.Response(helpers.ResponseParams{
+		StatusCode: http.StatusOK,
+		Message:    "Login Success",
+		Data:       user,
+	})
+
+	return ctx.Status(http.StatusOK).JSON(result)
+}
 func (h *userHandler) Register(ctx *fiber.Ctx) error {
 	var request models.UserRegister
 

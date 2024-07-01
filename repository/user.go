@@ -18,6 +18,9 @@ type UserService interface {
 	CheckDataPending(ctx context.Context, data models.UserRegister) bool
 	UpdateExpActivate(ctx context.Context, username string, newExpActivate time.Time) error
 	UpdateStatus(ctx context.Context, email string, status string) error
+	LoginClassic(ctx context.Context, data models.Login) (models.UserRegister, error)
+	LoginPhoneNUmber(ctx context.Context, data models.LoginPhoneNumber) bool
+	UpdateRefreshToken(ctx context.Context, username string, refreshToken string) error
 }
 
 func NewUserService(client *mongo.Client) *serviceRepo {
@@ -117,5 +120,49 @@ func (r *serviceRepo) UpdateStatus(ctx context.Context, email string, status str
 		return err
 	}
 
+	return nil
+}
+
+func (r *serviceRepo) LoginClassic(ctx context.Context, data models.Login) (models.UserRegister, error) {
+	var result models.UserRegister
+
+	filter := bson.M{
+		"$and": []bson.M{
+			{"username": data.Username},
+			{"status": "active"},
+		},
+	}
+
+	if err := r.MongoColl.FindOne(ctx, filter).Decode(&result); err != nil {
+		log.Println(err)
+		return models.UserRegister{}, err
+	}
+
+	return result, nil
+}
+
+func (r *serviceRepo) LoginPhoneNUmber(ctx context.Context, data models.LoginPhoneNumber) bool {
+	var result models.LoginResponse
+
+	filter := bson.M{
+		"$and": []bson.M{
+			{"phone_number": data.PhoneNumber},
+			{"status": "active"},
+		},
+	}
+
+	err := r.MongoColl.FindOne(ctx, filter).Decode(&result)
+
+	return err == nil
+}
+
+func (r *serviceRepo) UpdateRefreshToken(ctx context.Context, username string, refreshToken string) error {
+	filter := bson.M{"username": username}
+	update := bson.M{"$set": bson.M{"refresh_token": refreshToken, "exp_refresh_token": time.Now().UTC().Add(time.Hour)}}
+
+	_, err := r.MongoColl.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
+	}
 	return nil
 }
