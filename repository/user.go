@@ -38,6 +38,7 @@ func (r *serviceRepo) RegisterUser(ctx context.Context, data models.UserRegister
 		PhoneNumber:  data.PhoneNumber,
 		Email:        data.Email,
 		Status:       "pending",
+		Role:         data.Role,
 		Subscription: false,
 		ExpActivate:  data.ExpActivate,
 	}

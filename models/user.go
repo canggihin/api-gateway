@@ -14,6 +14,7 @@ type UserRegister struct {
 	PhoneNumber     string             `json:"phone_number" bson:"phone_number" binding:"required"`
 	Email           string             `json:"email" bson:"email" binding:"required"`
 	Status          string             `json:"status" bson:"status"`
+	Role            string             `json:"role" bson:"role"`
 	Subscription    bool               `json:"subscription" bson:"subscription"`
 	ExpSubs         time.Time          `json:"exp_subs" bson:"exp_subs"`
 	ExpActivate     time.Time          `json:"exp_activate" bson:"exp_activate"`

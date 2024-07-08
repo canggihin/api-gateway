@@ -84,6 +84,7 @@ func (s *userRepo) RegisterUser(ctx context.Context, data models.UserRegister) e
 		FullName:    strings.ToLower(data.FullName),
 		PhoneNumber: data.PhoneNumber,
 		Email:       data.Email,
+		Role:        data.Role,
 		ExpActivate: time.Now().UTC().Add(5 * time.Minute),
 	}
 
