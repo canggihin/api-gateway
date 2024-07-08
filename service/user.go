@@ -39,7 +39,7 @@ func (s *userRepo) LoginClassic(ctx context.Context, data models.Login) (models.
 		return models.LoginResponse{}, &helpers.UnauthorizedError{Message: "Invalid Password", MessageDev: err.Error()}
 	}
 
-	accessToken, refreshToken, err := helpers.CreateToken(user)
+	accessToken, refreshToken, err := helpers.EncodeWithStruct(&user)
 	if err != nil {
 		return models.LoginResponse{}, &helpers.InternalServerError{Message: "Failed to Create Token", MessageDev: err.Error()}
 	}
