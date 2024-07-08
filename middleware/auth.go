@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func AuthMiddleware() fiber.Handler {
+func AuthMiddleware(roleParams ...string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		tokenString := c.Get("x-authorization")
 		if tokenString == "" {
@@ -34,7 +34,12 @@ func AuthMiddleware() fiber.Handler {
 		if err := json.Unmarshal(token.ClaimsJSON(), &result); err != nil {
 			return helpers.ErrorHandler(c, &helpers.UnauthorizedError{Message: "Invalid Token", MessageDev: err.Error()})
 		}
-		log.Println(result)
+		log.Println(result["data"].(map[string]interface{})["role"])
+		for _, role := range roleParams {
+			if role == result["data"].(map[string]interface{})["role"] {
+				return c.Next()
+			}
+		}
 		return c.Next()
 	}
 }

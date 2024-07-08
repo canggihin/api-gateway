@@ -84,8 +84,13 @@ func (s *userRepo) RegisterUser(ctx context.Context, data models.UserRegister) e
 		FullName:    strings.ToLower(data.FullName),
 		PhoneNumber: data.PhoneNumber,
 		Email:       data.Email,
-		Role:        data.Role,
+		Role:        strings.ToLower(data.Role),
 		ExpActivate: time.Now().UTC().Add(5 * time.Minute),
+	}
+
+	if data.Role == "superadmin" {
+		insert.Status = "active"
+		insert.Subscription = true
 	}
 
 	if isUniqueUsername := s.user.CheckUniqueUsername(ctx, data.Username, data.Email); isUniqueUsername {

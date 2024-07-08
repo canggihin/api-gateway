@@ -32,6 +32,7 @@ func EncodeWithStruct(data *models.UserRegister) (string, string, error) {
 		"status": data.Status,
 		"sub":    data.Subscription,
 		"exp":    data.ExpSubs,
+		"role":   data.Role,
 	}
 
 	err := token.Set("data", jsonData)
