@@ -60,7 +60,7 @@ func (h *serviceHandler) GetService(ctx *fiber.Ctx) error {
 
 	ctx.Request().URI().SetHost(data.URL)
 	ctx.Request().URI().SetPath(path)
-	ctx.Request().URI().SetScheme("https")
+	ctx.Request().URI().SetScheme(data.Schema)
 
 	fullPath := ctx.Request().URI().String()
 	log.Println("Full Path:", fullPath)

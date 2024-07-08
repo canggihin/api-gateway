@@ -4,4 +4,5 @@ type Service struct {
 	Name    string   `json:"name" bson:"name"`
 	URL     string   `json:"url" bson:"url"`
 	Headers []string `json:"headers" bson:"headers"`
+	Schema  string   `json:"schema" bson:"schema"`
 }
