@@ -27,13 +27,12 @@ type Login struct {
 }
 
 type LoginResponse struct {
-	Status          string    `json:"status" bson:"status"`
-	Username        string    `json:"username" bson:"username"`
-	Subscription    bool      `json:"subscription" bson:"subscription"`
-	ExpSubs         time.Time `json:"exp_subs" bson:"exp_subs"`
-	RefreshToken    string    `json:"refresh_token" bson:"refresh_token"`
-	ExpRefreshToken time.Time `json:"exp_refresh_token" bson:"exp_refresh_token"`
-	AccessToken     string    `json:"access_token" bson:"access_token"`
+	Status       string    `json:"status" bson:"status"`
+	Username     string    `json:"username" bson:"username"`
+	Subscription bool      `json:"subscription" bson:"subscription"`
+	ExpSubs      time.Time `json:"exp_subs" bson:"exp_subs"`
+	RefreshToken string    `json:"refresh_token" bson:"refresh_token"`
+	AccessToken  string    `json:"access_token" bson:"access_token"`
 }
 
 type LoginPhoneNumber struct {

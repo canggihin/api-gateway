@@ -2,6 +2,7 @@ package routes
 
 import (
 	"api-gateway/handlers"
+	"api-gateway/middleware"
 	"api-gateway/repository"
 	"api-gateway/service"
 
@@ -15,7 +16,7 @@ func ServiceRoutes(r *fiber.App, mongodb *mongo.Client) {
 	serviceHandler := handlers.NewServiceHandler(serviceService)
 
 	router := r.Group("/reg-service")
-	router.Post("/", serviceHandler.CreateService)
+	router.Post("/", middleware.AuthMiddleware(), serviceHandler.CreateService)
 }
 
 func Gateway(r *fiber.App, mongoDB *mongo.Client) {
@@ -23,5 +24,5 @@ func Gateway(r *fiber.App, mongoDB *mongo.Client) {
 	service := service.NewService(serviceRepo)
 	serviceHandler := handlers.NewServiceHandler(service)
 
-	r.All("/:service/:path", serviceHandler.GetService)
+	r.All("/:service/:path", serviceHandler.GetService, middleware.AuthMiddleware())
 }
