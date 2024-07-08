@@ -17,6 +17,7 @@ type UserService interface {
 	RegisterUser(ctx context.Context, data models.UserRegister) error
 	UpdateActivate(ctx context.Context, status string, email string) error
 	LoginClassic(ctx context.Context, data models.Login) (models.LoginResponse, error)
+	UserInformation(ctx context.Context, username string) (models.UserRegister, error)
 }
 
 type userRepo struct {
@@ -58,6 +59,18 @@ func (s *userRepo) LoginClassic(ctx context.Context, data models.Login) (models.
 	}
 
 	return result, nil
+}
+
+func (s *userRepo) UserInformation(ctx context.Context, username string) (models.UserRegister, error) {
+	user, err := s.user.UserInformation(ctx, username)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return models.UserRegister{}, &helpers.NotFoundError{Message: fmt.Sprintf("Unable to Find Username with %s", username), MessageDev: err.Error()}
+		}
+		return models.UserRegister{}, &helpers.InternalServerError{Message: "Failed to Get User Information", MessageDev: err.Error()}
+	}
+
+	return user, nil
 }
 func (s *userRepo) RegisterUser(ctx context.Context, data models.UserRegister) error {
 

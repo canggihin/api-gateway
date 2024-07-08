@@ -16,6 +16,7 @@ func UserRoutes(r *fiber.App, mongoDB *mongo.Client) {
 
 	router := r.Group("/user")
 	router.Post("/", userHandler.Register)
-	router.Get("/", userHandler.UpdateStatus)
+	router.Put("/", userHandler.UpdateStatus)
+	router.Get("/", userHandler.UserInformation)
 	router.Post("/login", userHandler.LoginClassic)
 }

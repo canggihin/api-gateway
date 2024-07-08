@@ -70,3 +70,20 @@ func (h *userHandler) UpdateStatus(ctx *fiber.Ctx) error {
 	}
 	return nil
 }
+
+func (h *userHandler) UserInformation(ctx *fiber.Ctx) error {
+	request := ctx.Params("username")
+
+	user, err := h.user.UserInformation(context.Background(), request)
+	if err != nil {
+		return helpers.ErrorHandler(ctx, err)
+	}
+
+	result := helpers.Response(helpers.ResponseParams{
+		StatusCode: http.StatusOK,
+		Message:    "success get user information",
+		Data:       user,
+	})
+
+	return ctx.Status(http.StatusOK).JSON(result)
+}

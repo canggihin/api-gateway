@@ -21,6 +21,7 @@ type UserService interface {
 	LoginClassic(ctx context.Context, data models.Login) (models.UserRegister, error)
 	LoginPhoneNUmber(ctx context.Context, data models.LoginPhoneNumber) bool
 	UpdateRefreshToken(ctx context.Context, username string, refreshToken string) error
+	UserInformation(ctx context.Context, username string) (models.UserRegister, error)
 }
 
 func NewUserService(client *mongo.Client) *serviceRepo {
@@ -130,6 +131,24 @@ func (r *serviceRepo) LoginClassic(ctx context.Context, data models.Login) (mode
 	filter := bson.M{
 		"$and": []bson.M{
 			{"username": data.Username},
+			{"status": "active"},
+		},
+	}
+
+	if err := r.MongoColl.FindOne(ctx, filter).Decode(&result); err != nil {
+		log.Println(err)
+		return models.UserRegister{}, err
+	}
+
+	return result, nil
+}
+
+func (r *serviceRepo) UserInformation(ctx context.Context, username string) (models.UserRegister, error) {
+	var result models.UserRegister
+
+	filter := bson.M{
+		"$and": []bson.M{
+			{"username": username},
 			{"status": "active"},
 		},
 	}
