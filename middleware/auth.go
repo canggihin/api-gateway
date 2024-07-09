@@ -3,7 +3,6 @@ package middleware
 import (
 	"api-gateway/helpers"
 	"encoding/json"
-	"log"
 	"os"
 
 	"aidanwoods.dev/go-paseto"
@@ -34,7 +33,6 @@ func AuthMiddleware(roleParams ...string) fiber.Handler {
 		if err := json.Unmarshal(token.ClaimsJSON(), &result); err != nil {
 			return helpers.ErrorHandler(c, &helpers.UnauthorizedError{Message: "Invalid Token", MessageDev: err.Error()})
 		}
-		log.Println(result["data"].(map[string]interface{})["role"])
 		for _, role := range roleParams {
 			if role == result["data"].(map[string]interface{})["role"] {
 				return c.Next()
