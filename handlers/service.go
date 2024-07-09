@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"api-gateway/helpers"
+	"api-gateway/middleware"
 	"api-gateway/models"
 	"api-gateway/service"
 	"context"
@@ -51,6 +52,28 @@ func (h *serviceHandler) GetService(ctx *fiber.Ctx) error {
 	}
 
 	for _, header := range data.Headers {
+		if header == "x-username" {
+			if ctx.Get("x-username") == "" {
+				return helpers.ErrorHandler(ctx, &helpers.BadRequestError{Message: "Username Header is Required!"})
+			}
+			log.Println(ctx.Get("x-username"))
+			checkUsername, err := h.services.CheckUsername(ctx.Get("x-username"))
+			if err != nil {
+				return helpers.ErrorHandler(ctx, err)
+			}
+			if checkUsername == (models.UserRegister{}) {
+				return helpers.ErrorHandler(ctx, &helpers.BadRequestError{Message: "Username not found"})
+			}
+			token := ctx.Get("x-authorization")
+			resultToken, err := middleware.DecodeToken(token)
+			if err != nil {
+				return helpers.ErrorHandler(ctx, err)
+			}
+
+			if checkUsername.Username != resultToken["data"].(map[string]interface{})["username"] {
+				return helpers.ErrorHandler(ctx, &helpers.BadRequestError{Message: "Username not match"})
+			}
+		}
 		ctx.Request().Header.Set(header, ctx.Get(header))
 	}
 

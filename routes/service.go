@@ -12,7 +12,8 @@ import (
 
 func ServiceRoutes(r *fiber.App, mongodb *mongo.Client) {
 	serviceRepo := repository.NewServiceRepository(mongodb)
-	serviceService := service.NewService(serviceRepo)
+	userService := repository.NewUserService(mongodb)
+	serviceService := service.NewService(serviceRepo, userService)
 	serviceHandler := handlers.NewServiceHandler(serviceService)
 
 	router := r.Group("/reg-service")
@@ -21,7 +22,8 @@ func ServiceRoutes(r *fiber.App, mongodb *mongo.Client) {
 
 func Gateway(r *fiber.App, mongoDB *mongo.Client) {
 	serviceRepo := repository.NewServiceRepository(mongoDB)
-	service := service.NewService(serviceRepo)
+	userService := repository.NewUserService(mongoDB)
+	service := service.NewService(serviceRepo, userService)
 	serviceHandler := handlers.NewServiceHandler(service)
 
 	r.All("/:service/:path", serviceHandler.GetService)

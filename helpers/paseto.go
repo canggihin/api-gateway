@@ -29,10 +29,11 @@ func EncodeWithStruct(data *models.UserRegister) (string, string, error) {
 	token.SetString("id", data.Username)
 
 	jsonData := map[string]interface{}{
-		"status": data.Status,
-		"sub":    data.Subscription,
-		"exp":    data.ExpSubs,
-		"role":   data.Role,
+		"status":   data.Status,
+		"sub":      data.Subscription,
+		"exp":      data.ExpSubs,
+		"role":     data.Role,
+		"username": data.Username,
 	}
 
 	err := token.Set("data", jsonData)
