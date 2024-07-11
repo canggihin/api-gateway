@@ -44,36 +44,37 @@ func (h *serviceHandler) CreateService(ctx *fiber.Ctx) error {
 func (h *serviceHandler) GetService(ctx *fiber.Ctx) error {
 	serviceName := ctx.Params("service")
 	path := ctx.Params("path")
+	queryParams := ctx.Queries()
 
-	log.Println(serviceName, path)
+	var username string
+	if queryParams["username"] != "" {
+		username = queryParams["username"]
+	}
+
+	checkUsername, err := h.services.CheckUsername(username)
+	if err != nil {
+		return helpers.ErrorHandler(ctx, err)
+	}
+	if checkUsername == (models.UserRegister{}) {
+		return helpers.ErrorHandler(ctx, &helpers.BadRequestError{Message: "Username not found"})
+	}
+
+	token := ctx.Get("x-authorization")
+	resultToken, err := middleware.DecodeToken(token)
+	if err != nil {
+		return helpers.ErrorHandler(ctx, err)
+	}
+
+	if checkUsername.Username != resultToken["data"].(map[string]interface{})["username"] {
+		return helpers.ErrorHandler(ctx, &helpers.BadRequestError{Message: "Username not match"})
+	}
+
 	data, err := h.services.GetService(context.Background(), serviceName)
 	if err != nil {
 		return helpers.ErrorHandler(ctx, err)
 	}
 
 	for _, header := range data.Headers {
-		if header == "x-username" {
-			if ctx.Get("x-username") == "" {
-				return helpers.ErrorHandler(ctx, &helpers.BadRequestError{Message: "Username Header is Required!"})
-			}
-			log.Println(ctx.Get("x-username"))
-			checkUsername, err := h.services.CheckUsername(ctx.Get("x-username"))
-			if err != nil {
-				return helpers.ErrorHandler(ctx, err)
-			}
-			if checkUsername == (models.UserRegister{}) {
-				return helpers.ErrorHandler(ctx, &helpers.BadRequestError{Message: "Username not found"})
-			}
-			token := ctx.Get("x-authorization")
-			resultToken, err := middleware.DecodeToken(token)
-			if err != nil {
-				return helpers.ErrorHandler(ctx, err)
-			}
-
-			if checkUsername.Username != resultToken["data"].(map[string]interface{})["username"] {
-				return helpers.ErrorHandler(ctx, &helpers.BadRequestError{Message: "Username not match"})
-			}
-		}
 		ctx.Request().Header.Set(header, ctx.Get(header))
 	}
 
@@ -82,7 +83,7 @@ func (h *serviceHandler) GetService(ctx *fiber.Ctx) error {
 	})
 
 	ctx.Request().URI().SetHost(data.URL)
-	ctx.Request().URI().SetPath(path)
+	ctx.Request().URI().SetPath(serviceName + "/" + path)
 	ctx.Request().URI().SetScheme(data.Schema)
 
 	fullPath := ctx.Request().URI().String()
