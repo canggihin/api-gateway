@@ -83,7 +83,7 @@ func (h *serviceHandler) GetService(ctx *fiber.Ctx) error {
 	})
 
 	ctx.Request().URI().SetHost(data.URL)
-	ctx.Request().URI().SetPath(serviceName + "/" + path)
+	ctx.Request().URI().SetPath(path)
 	ctx.Request().URI().SetScheme(data.Schema)
 
 	fullPath := ctx.Request().URI().String()
