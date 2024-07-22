@@ -17,7 +17,7 @@ func ServiceRoutes(r *fiber.App, mongodb *mongo.Client) {
 	serviceHandler := handlers.NewServiceHandler(serviceService)
 
 	router := r.Group("/reg-service")
-	router.Post("/", middleware.AuthMiddleware("superadmin"), serviceHandler.CreateService)
+	router.Post("/", middleware.AuthMiddleware("superadmin", "admin"), serviceHandler.CreateService)
 }
 
 func Gateway(r *fiber.App, mongoDB *mongo.Client) {

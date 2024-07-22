@@ -115,11 +115,6 @@ func (s *userRepo) RegisterUser(ctx context.Context, data models.UserRegister) e
 		ExpActivate: time.Now().UTC().Add(5 * time.Minute),
 	}
 
-	if data.Role == "superadmin" {
-		insert.Status = "active"
-		insert.Subscription = true
-	}
-
 	if isUniqueUsername := s.user.CheckUniqueUsername(ctx, data.Username, data.Email); isUniqueUsername {
 		return &helpers.BadRequestError{Message: "Username or Email already registered, Please Activate Now"}
 	}

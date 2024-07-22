@@ -62,3 +62,47 @@ func EncodeWithStruct(data *models.UserRegister) (string, string, error) {
 
 	return accessToken, refreshTokenString, nil
 }
+
+func EncodeWithStructAdmin(data *models.UserAdminRegister) (string, string, error) {
+	token := paseto.NewToken()
+	now := time.Now()
+	expiration := now.Add(2 * time.Hour)
+
+	// Set claims for access token
+	token.SetIssuedAt(now)
+	token.SetNotBefore(now)
+	token.SetExpiration(expiration)
+	token.SetString("id", data.Username)
+
+	jsonData := map[string]interface{}{
+		"status":   data.Status,
+		"role":     data.Role,
+		"username": data.Username,
+	}
+
+	err := token.Set("data", jsonData)
+	if err != nil {
+		return "", "", err
+	}
+
+	secretKey, err := paseto.NewV4AsymmetricSecretKeyFromHex(os.Getenv("PRIVATE_KEY_PASSETO"))
+	if err != nil {
+		return "", "", err
+	}
+
+	// Sign the access token
+	accessToken := token.V4Sign(secretKey, nil)
+
+	// Generate refresh token
+	refreshToken := paseto.NewToken()
+	refreshToken.SetIssuedAt(now)
+	refreshToken.SetNotBefore(now)
+	refreshToken.SetExpiration(expiration.Add(24 * time.Hour)) // Refresh token expires in 24 hours
+
+	// Optionally, you can set additional claims for refresh token here
+
+	// Sign the refresh token
+	refreshTokenString := refreshToken.V4Sign(secretKey, nil)
+
+	return accessToken, refreshTokenString, nil
+}
