@@ -53,7 +53,7 @@ func (h *adminHandler) LoginClassic(ctx *fiber.Ctx) error {
 
 	user, err := h.admin.LoginClassic(context.Background(), request)
 	if err != nil {
-		log.Println(err)
+		log.Println("error in query :", err)
 		return helpers.ErrorHandler(ctx, err)
 	}
 	result := helpers.Response(helpers.ResponseParams{
