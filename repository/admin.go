@@ -74,10 +74,7 @@ func (r *adminRepo) CheckUniqueUsername(ctx context.Context, username string, em
 func (r *adminRepo) LoginClassicAdmin(ctx context.Context, data models.Login) (models.UserAdminRegister, error) {
 	var result models.UserAdminRegister
 
-	filter := bson.M{
-		"username": data.Username,
-	}
-
+	filter := bson.M{"username": data.Username}
 	if err := r.AdminColl.FindOne(ctx, filter).Decode(&result); err != nil {
 		log.Println(err)
 		return models.UserAdminRegister{}, err
