@@ -2,6 +2,7 @@ package routes
 
 import (
 	"api-gateway/handlers"
+	"api-gateway/middleware"
 	"api-gateway/repository"
 	"api-gateway/service"
 
@@ -15,6 +16,6 @@ func AdminRoutes(r *fiber.App, mongoDB *mongo.Client) {
 	adminHandler := handlers.NewAdminHandler(adminService)
 
 	router := r.Group("/admin")
-	router.Post("/", adminHandler.RegisterAdmin)
+	router.Post("/", middleware.AuthMiddleware("superadmin"), adminHandler.RegisterAdmin)
 	router.Post("/login", adminHandler.LoginClassic)
 }
