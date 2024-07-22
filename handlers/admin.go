@@ -5,6 +5,7 @@ import (
 	"api-gateway/models"
 	"api-gateway/service"
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -52,6 +53,7 @@ func (h *adminHandler) LoginClassic(ctx *fiber.Ctx) error {
 
 	user, err := h.admin.LoginClassic(context.Background(), request)
 	if err != nil {
+		log.Println(err)
 		return helpers.ErrorHandler(ctx, err)
 	}
 	result := helpers.Response(helpers.ResponseParams{
