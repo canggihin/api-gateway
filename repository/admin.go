@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,7 +25,7 @@ type adminRepo struct {
 }
 
 func NewAdminRepository(client *mongo.Client) *adminRepo {
-	collection := client.Database("admin").Collection("admin")
+	collection := client.Database(os.Getenv("DB_NAME")).Collection(os.Getenv("ADMIN_COLLECTION"))
 	return &adminRepo{adminColl: collection}
 }
 

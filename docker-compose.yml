@@ -9,6 +9,7 @@ services:
       - USER_COLLECTION=${USER_COLLECTION}
       - PRIVATE_KEY_PASSETO=${PRIVATE_KEY_PASSETO}
       - PUBLIC_KEY_PASSETO=${PUBLIC_KEY_PASSETO}
+      - ADMIN_COLLECTION=${ADMIN_COLLECTION}
     networks:
       - db-network
       - service-networks

@@ -52,7 +52,7 @@ func (s *adminService) RegisterAdmin(ctx context.Context, data models.UserAdminR
 		Role:        strings.ToLower(data.Role),
 	}
 	if isUniqueUsername := s.adminRepo.CheckUniqueUsername(ctx, data.Username, data.Email, data.PhoneNumber); isUniqueUsername {
-		return &helpers.BadRequestError{Message: "Username or Email already registered, Please Activate Now"}
+		return &helpers.BadRequestError{Message: "Username or Email already registered"}
 	}
 
 	if err := s.adminRepo.RegisterAdmin(ctx, *insert); err != nil {
