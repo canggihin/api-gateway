@@ -15,8 +15,8 @@ type adminHandler struct {
 	admin service.AdminService
 }
 
-func NewAdminHandler(admin service.AdminService) *adminHandler {
-	return &adminHandler{admin: admin}
+func NewAdminHandler(r service.AdminService) *adminHandler {
+	return &adminHandler{admin: r}
 }
 
 func (h *adminHandler) RegisterAdmin(ctx *fiber.Ctx) error {

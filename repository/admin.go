@@ -21,12 +21,12 @@ type AdminRepo interface {
 }
 
 type adminRepo struct {
-	adminColl *mongo.Collection
+	AdminColl *mongo.Collection
 }
 
 func NewAdminRepository(client *mongo.Client) *adminRepo {
 	collection := client.Database(os.Getenv("DB_NAME")).Collection(os.Getenv("ADMIN_COLLECTION"))
-	return &adminRepo{adminColl: collection}
+	return &adminRepo{AdminColl: collection}
 }
 
 func (r *adminRepo) RegisterAdmin(ctx context.Context, data models.UserAdminRegister) error {
@@ -49,7 +49,7 @@ func (r *adminRepo) RegisterAdmin(ctx context.Context, data models.UserAdminRegi
 		return errors.New("role must be admin or superadmin")
 	}
 
-	_, err := r.adminColl.InsertOne(ctx, insert)
+	_, err := r.AdminColl.InsertOne(ctx, insert)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (r *adminRepo) CheckUniqueUsername(ctx context.Context, username string, em
 		"phone_number": phoneNumber,
 	}
 
-	if err := r.adminColl.FindOne(ctx, filter).Decode(&result); err == nil {
+	if err := r.AdminColl.FindOne(ctx, filter).Decode(&result); err == nil {
 		return true
 	}
 	return false
@@ -78,7 +78,7 @@ func (r *adminRepo) LoginClassic(ctx context.Context, data models.Login) (models
 		"username": data.Username,
 	}
 
-	if err := r.adminColl.FindOne(ctx, filter).Decode(&result); err != nil {
+	if err := r.AdminColl.FindOne(ctx, filter).Decode(&result); err != nil {
 		log.Println(err)
 		return models.UserAdminRegister{}, err
 	}
@@ -90,7 +90,7 @@ func (r *adminRepo) UpdateRefreshToken(ctx context.Context, username string, ref
 	filter := bson.M{"username": username}
 	update := bson.M{"$set": bson.M{"refresh_token": refreshToken, "exp_refresh_token": time.Now().UTC().Add(time.Hour)}}
 
-	_, err := r.adminColl.UpdateOne(ctx, filter, update)
+	_, err := r.AdminColl.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return err
 	}
