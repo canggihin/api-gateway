@@ -45,22 +45,21 @@ func (h *adminHandler) RegisterAdmin(ctx *fiber.Ctx) error {
 }
 
 func (h *adminHandler) LoginClassicAdmin(ctx *fiber.Ctx) error {
-	log.Println("login classic admin")
-	// var request models.Login
+	var request models.Login
 
-	// if err := ctx.BodyParser(&request); err != nil {
-	// 	return &helpers.BadRequestError{Message: "Invalid Username or Password", MessageDev: err.Error()}
-	// }
+	if err := ctx.BodyParser(&request); err != nil {
+		return &helpers.BadRequestError{Message: "Invalid Username or Password", MessageDev: err.Error()}
+	}
 
-	// user, err := h.admin.LoginClassic(context.Background(), request)
-	// if err != nil {
-	// 	log.Println("error in query :", err)
-	// 	return helpers.ErrorHandler(ctx, err)
-	// }
+	user, err := h.admin.LoginClassic(context.Background(), request)
+	if err != nil {
+		log.Println("error in query :", err)
+		return helpers.ErrorHandler(ctx, err)
+	}
 	result := helpers.Response(helpers.ResponseParams{
 		StatusCode: http.StatusOK,
 		Message:    "Login Success",
-		// Data:       user,
+		Data:       user,
 	})
 
 	return ctx.Status(http.StatusOK).JSON(result)
