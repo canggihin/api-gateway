@@ -36,7 +36,7 @@ func (h *adminHandler) RegisterAdmin(ctx *fiber.Ctx) error {
 			"username":  request.Username,
 			"full_name": request.FullName,
 			"email":     request.Email,
-			"status":    "pending",
+			"status":    "active",
 		},
 	})
 
