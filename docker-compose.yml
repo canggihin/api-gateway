@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    image: argyarijal/mqtt-client-ta:latest
+    image: argyarijal/api-gateway:tagname:canary
     environment:
       - MONGODB_URI=${MONGODB_URI}
       - DB_NAME=${DB_NAME}
