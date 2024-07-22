@@ -75,9 +75,7 @@ func (r *adminRepo) LoginClassic(ctx context.Context, data models.Login) (models
 	var result models.UserAdminRegister
 
 	filter := bson.M{
-		"$and": []bson.M{
-			{"username": data.Username},
-		},
+		"username": data.Username,
 	}
 
 	if err := r.adminColl.FindOne(ctx, filter).Decode(&result); err != nil {
