@@ -62,7 +62,7 @@ func (s *adminService) RegisterAdmin(ctx context.Context, data models.UserAdminR
 }
 
 func (s *adminService) LoginClassic(ctx context.Context, data models.Login) (models.LoginResponse, error) {
-	user, err := s.adminRepo.LoginClassic(ctx, data)
+	user, err := s.adminRepo.LoginClassicAdmin(ctx, data)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return models.LoginResponse{}, &helpers.NotFoundError{Message: fmt.Sprintf("Unable to Find Username with %s", data.Username), MessageDev: err.Error()}

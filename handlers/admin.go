@@ -44,7 +44,8 @@ func (h *adminHandler) RegisterAdmin(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusCreated).JSON(res)
 }
 
-func (h *adminHandler) LoginClassic(ctx *fiber.Ctx) error {
+func (h *adminHandler) LoginClassicAdmin(ctx *fiber.Ctx) error {
+	log.Println("login classic admin")
 	var request models.Login
 
 	if err := ctx.BodyParser(&request); err != nil {

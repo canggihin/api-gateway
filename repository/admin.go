@@ -16,7 +16,7 @@ import (
 type AdminRepo interface {
 	RegisterAdmin(ctx context.Context, data models.UserAdminRegister) error
 	CheckUniqueUsername(ctx context.Context, username string, email string, phoneNumber string) bool
-	LoginClassic(ctx context.Context, data models.Login) (models.UserAdminRegister, error)
+	LoginClassicAdmin(ctx context.Context, data models.Login) (models.UserAdminRegister, error)
 	UpdateRefreshToken(ctx context.Context, username string, refreshToken string) error
 }
 
@@ -71,7 +71,7 @@ func (r *adminRepo) CheckUniqueUsername(ctx context.Context, username string, em
 	return false
 }
 
-func (r *adminRepo) LoginClassic(ctx context.Context, data models.Login) (models.UserAdminRegister, error) {
+func (r *adminRepo) LoginClassicAdmin(ctx context.Context, data models.Login) (models.UserAdminRegister, error) {
 	var result models.UserAdminRegister
 
 	filter := bson.M{
