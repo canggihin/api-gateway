@@ -44,6 +44,11 @@ func (r *serviceRepo) RegisterUser(ctx context.Context, data models.UserRegister
 		Subscription: false,
 		ExpActivate:  data.ExpActivate,
 	}
+
+	if data.Role == "admin" {
+		insert.Status = "active"
+	}
+
 	_, err := r.MongoColl.InsertOne(ctx, insert)
 	if err != nil {
 		return err
