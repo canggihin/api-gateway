@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  app:
+    image: argyarijal/mqtt-client-ta:latest
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - DB_NAME=${DB_NAME}
+      - SERVICE_COLLECTION=${SERVICE_COLLECTION}
+      - USER_COLLECTION=${USER_COLLECTION}
+      - PRIVATE_KEY_PASSETO=${PRIVATE_KEY_PASSETO}
+      - PUBLIC_KEY_PASSETO=${PUBLIC_KEY_PASSETO}
+    networks:
+      - db-network
+      - service-networks
+    ports:
+      - "4000:8181"
+    restart: unless-stopped
+
+networks:
+  db-network:
+    external: true
+  service-networks:
+    external: true
