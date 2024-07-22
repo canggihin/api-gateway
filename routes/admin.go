@@ -17,5 +17,5 @@ func AdminRoutes(r *fiber.App, mongoDB *mongo.Client) {
 
 	router := r.Group("/admin")
 	router.Post("/", middleware.AuthMiddleware("superadmin"), adminHandler.RegisterAdmin)
-	router.Post("/login", adminHandler.LoginClassicAdmin)
+	router.Post("/login-admin", adminHandler.LoginClassicAdmin)
 }

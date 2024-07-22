@@ -34,9 +34,9 @@ func main() {
 	app.Use(logger.New())
 	app.Use(configCors)
 
+	routes.AdminRoutes(app, db)
 	routes.ServiceRoutes(app, db)
 	routes.UserRoutes(app, db)
 	routes.Gateway(app, db)
-	routes.AdminRoutes(app, db)
 	log.Fatal(app.Listen(":4000"))
 }
