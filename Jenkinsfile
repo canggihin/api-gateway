@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        IMAGE_NAME = 'argyarijal/api-gateway:tagname:canary'
+        IMAGE_NAME = 'argyarijal/api-gateway:canary'
         CONTAINER_NAME = 'service-mqtt-golang'
         BRANCH_NAME = "main"
         MSG_COMMIT = sh(script: "git log -1 --pretty=%B ${env.GIT_COMMIT}", returnStdout: true).trim()
